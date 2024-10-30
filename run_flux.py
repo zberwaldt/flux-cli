@@ -4,7 +4,12 @@ import base64
 import argparse
 from diffusers import FluxPipeline
 from typing import Tuple
+from pathlib import Path
 import uuid
+
+STORAGE_DIR: Path = Path.home() / "Pictures" / "Flux"
+
+STORAGE_DIR.mkdir(parents=True, exist_ok=True)
 
 def load_flux():
     pipeline = FluxPipeline.from_pretrained("black-forest-labs/FLUX.1-schnell", torch_dtype=torch.bfloat16)
@@ -47,7 +52,8 @@ def main():
         images = generate_image(pipeline, prompt=args.prompt, width=width, height=height, guideance_scale=args.guideance_scale, num_images_per_prompt=args.number)
         for image in images:
             filename = generate_random_string()
-            image.save(f"{filename}.png")
+            filepath = STORAGE_DIR / f"{filename}.png"
+            image.save(filepath)
     except KeyboardInterrupt:
         print('\nExiting early...')
         exit(0)
