@@ -52,7 +52,7 @@ def load_flux():
     pipeline.vae.enable_tiling()
     return pipeline
 
-def generate_image(pipeline, prompt, prompt_2=None, init_image=None, height=1024, width=1024, guideance_scale=0, num_images_per_prompt=1, num_inference_steps=50):
+def generate_image(pipeline, prompt, strength=None, prompt_2=None, init_image=None, height=1024, width=1024, guideance_scale=0, num_images_per_prompt=1, num_inference_steps=50):
     kwargs = { 
           "prompt": prompt,
           "prompt_2": prompt_2,
@@ -63,6 +63,9 @@ def generate_image(pipeline, prompt, prompt_2=None, init_image=None, height=1024
           "num_inference_steps": num_inference_steps,
           "num_images_per_prompt": num_images_per_prompt
     }
+
+    if strength:
+        kwargs["strength"] = strength
 
     if isinstance(pipeline, FluxImg2ImgPipeline) and init_image is not None:
         kwargs["image"] = init_image
@@ -106,7 +109,7 @@ def main():
 
         image = Image.open(target_img_path)
 
-        init_image = load_image(image).resize((256, 256))
+        init_image = load_image(image).resize((1024, 1024))
 
         width, height = args.size
 
@@ -123,6 +126,7 @@ def main():
                 prompt_2=args.prompt2,
                 width=width,
                 height=height,
+                strength=args.strength,
                 guideance_scale=args.guideance_scale,
                 num_images_per_prompt=args.number
             )
@@ -151,6 +155,7 @@ parser.add_argument("-o", "--output", type=str, default="image", help="the name 
 parser.add_argument("-p", "--prompt", type=str, required=True, help="the prompt")
 parser.add_argument("-p2", "--prompt2", type=str, help="A second prompt")
 parser.add_argument("-gs", "--guideance-scale", type=float, default=0)
+parser.add_argument("--strength", type=float)
 parser.add_argument("--size", type=parse_dimensions, default="1024:1024", help="the size of the output images")
 parser.add_argument("-u", "--use-image", action="store_true", help="use a predefined image")
 
