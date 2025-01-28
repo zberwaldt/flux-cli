@@ -1,0 +1,12 @@
+[project]
+name = "Flux"
+version = "0.0.1"
+authors = [
+    { name="Zach Berwaldt", email="zberwaldt@gmail.com" }
+]
+description = "A simple CLI to generate images with flux locally."
+readme = "README.md"
+requires-python = ">=3.12"
+
+[project.scripts]
+flux = "run_flux:main"

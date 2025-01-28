@@ -1,3 +1,5 @@
 *.png
 *.log
 prompts.txt
+.idea
+Flux.egg-info
