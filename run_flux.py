@@ -34,16 +34,6 @@ def record_prompt(prompt, filename="prompts.txt"):
     else:
         logger.info(f"Prompt already exists in the file: \"{prompt}\"")
 
-def load_flux_img_to_img():
-    import torch
-    from diffusers import FluxImg2ImgPipeline
-
-    pipeline = FluxImg2ImgPipeline.from_pretrained("black-forest-labs/FLUX.1-schnell", torch_dtype=torch.bfloat16)
-    pipeline.enable_model_cpu_offload()
-    pipeline.vae.enable_slicing()
-    pipeline.vae.enable_tiling()
-    return pipeline
-
 def load_flux():
     import torch
     from diffusers import FluxPipeline
@@ -98,7 +88,6 @@ def main():
     parser.add_argument("-gs", "--guideance-scale", type=float, default=0)
     parser.add_argument("--strength", type=float)
     parser.add_argument("--size", type=parse_dimensions, default="1024:1024", help="the size of the output images")
-    parser.add_argument("-u", "--use-image", action="store_true", help="use a predefined image")
     args = parser.parse_args()
 
     try:
@@ -107,18 +96,9 @@ def main():
 
         logger.info("Choosing model...")
 
-        pipeline = load_flux_img_to_img() if args.use_image else load_flux()
+        pipeline = load_flux()
 
         pipeline.to(torch.float16)
-
-        # target_img = STORAGE_DIR / "1517481062292.jpg"
-        target_img = STORAGE_DIR / "Flux" / "a23aae99-c8f1-4ce5-b91f-0b732774dadd.png"
-
-        target_img_path = target_img.resolve(strict=True)
-
-        image = Image.open(target_img_path)
-
-        init_image = load_image(image).resize((1024, 1024))
 
         width, height = args.size
 
@@ -129,7 +109,6 @@ def main():
         logger.info("Generating image(s)...")
 
         config = GenerateImageConfig(
-            init_image=init_image if args.use_image else None,
             prompt=args.prompt,
             prompt_2=args.prompt2 if args.prompt2 else None,
             width=width,
