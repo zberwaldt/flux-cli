@@ -3,3 +3,4 @@
 prompts.txt
 .idea
 Flux.egg-info
+__pycache__/

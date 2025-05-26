@@ -3,7 +3,7 @@ import argparse
 from dataclasses import dataclass, asdict
 from typing import Tuple, Optional
 from pathlib import Path
-from PIL import Image
+from PIL.Image import Image
 import uuid
 import logging
 
